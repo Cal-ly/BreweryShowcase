@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Reflection.Emit;
-
-namespace BreweryAPI.Data;
+﻿namespace BreweryAPI.Data;
 
 public class BreweryContext(DbContextOptions<BreweryContext> options) : DbContext(options)
 {
