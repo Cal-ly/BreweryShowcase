@@ -1,5 +1,4 @@
-﻿
-global using BreweryAPI.Data;
+﻿global using BreweryAPI.Data;
 global using BreweryAPI.Models.Enums;
 global using BreweryAPI.Models.Classes;
 global using BreweryAPI.Models.Dto;

@@ -1,4 +1,6 @@
-﻿namespace BreweryAPI.Controllers;
+﻿using Microsoft.AspNetCore.Authorization;
+
+namespace BreweryAPI.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
@@ -20,6 +22,25 @@ public class OrdersController : ControllerBase
             .ThenInclude(oi => oi.Beverage)
             .ToListAsync();
         return Ok(orders);
+    }
+
+    [HttpGet("my-orders")]
+    public async Task<IActionResult> GetMyOrders()
+    {
+        // Retrieve the authenticated user's email from claims
+        var userEmail = User.FindFirstValue(ClaimTypes.Name);
+
+        // Find the customer associated with this user
+        var customer = await _context.Customers
+            .Include(c => c.Orders)
+            .ThenInclude(o => o.OrderItems)
+            .ThenInclude(oi => oi.Beverage)
+            .SingleOrDefaultAsync(c => c.User!.Email == userEmail);
+
+        if (customer == null)
+            return NotFound("Customer not found for the current user.");
+
+        return Ok(customer.Orders);
     }
 
     [HttpGet("{id}")]
@@ -53,4 +74,6 @@ public class OrdersController : ControllerBase
         await _context.SaveChangesAsync();
         return NoContent();
     }
+
+    
 }
