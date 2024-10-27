@@ -1,6 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
-
-namespace BreweryAPI.Data;
+﻿namespace BreweryAPI.Data;
 
 public class DataSeeder
 {
@@ -51,6 +49,20 @@ public class DataSeeder
 
             _context.Users.AddRange(users);
             _context.SaveChanges();
+
+            // Update customers with UserId and User reference
+            foreach (var customer in customers)
+            {
+                var user = users.FirstOrDefault(u => u.CustomerId == customer.Id);
+                if (user != null)
+                {
+                    customer.UserId = user.Id;
+                    customer.User = user;
+                }
+            }
+            _context.Customers.UpdateRange(customers);
+            _context.SaveChanges();
+
         }
 
         if (!_context.Beverages.Any())

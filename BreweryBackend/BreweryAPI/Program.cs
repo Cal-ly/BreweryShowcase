@@ -3,14 +3,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllers();
 
+//builder.Services.AddDbContext<BreweryContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 if (string.IsNullOrEmpty(connectionString))
 {
     throw new InvalidOperationException("Database connection string is not configured.");
 }
-//builder.Services.AddDbContext<BreweryContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("DefaultConnection")));
-
 builder.Services.AddDbContext<BreweryContext>(options => options.UseMySQL(connectionString));
+
 
 builder.Services.AddScoped<TokenService>();
 
