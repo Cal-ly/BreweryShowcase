@@ -52,12 +52,13 @@ public class AnalyticsController : ControllerBase
     public async Task<IActionResult> GetMonthlyRevenue()
     {
         var monthlyRevenue = await _context.Orders
-            .GroupBy(o => new { o.OrderDate.Value.Year, o.OrderDate.Value.Month })
+            .Where(o => o.OrderDate.HasValue)
+            .GroupBy(o => new { o.OrderDate!.Value.Year, o.OrderDate!.Value.Month })
             .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
             .Select(g => new
             {
-                Year = g.Key.Year,
-                Month = g.Key.Month,
+                g.Key.Year,
+                g.Key.Month,
                 Revenue = g.Sum(o => o.TotalAmount)
             })
             .ToListAsync();

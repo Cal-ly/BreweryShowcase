@@ -1,14 +1,20 @@
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddControllers();
+
 var connectionString = "DefaultConnection";
-builder.Services.AddDbContext<BreweryContext>(options =>
-    options.UseMySQL(connectionString));
+builder.Services.AddDbContext<BreweryContext>(options => options.UseMySQL(connectionString));
 
 builder.Services.AddScoped<TokenService>();
 
 // JWT Configuration
 var jwtKey = builder.Configuration["Jwt:Key"];
+if (string.IsNullOrEmpty(jwtKey))
+{
+    throw new InvalidOperationException("JWT Key is not configured.");
+}
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
