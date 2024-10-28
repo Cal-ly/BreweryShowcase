@@ -4,24 +4,18 @@
 [Route("api/[controller]")]
 public class AnalyticsController : ControllerBase
 {
-    private readonly BreweryContext _context;
+    private readonly AnalyticsService _analyticService;
 
-    public AnalyticsController(BreweryContext context)
+    public AnalyticsController(AnalyticsService analyticService)
     {
-        _context = context;
+        _analyticService = analyticService;
     }
 
     // Top Beverages
     [HttpGet("top-beverages")]
     public async Task<IActionResult> GetTopBeverages()
     {
-        var topBeverages = await _context.OrderItems
-            .GroupBy(oi => oi.BeverageId)
-            .OrderByDescending(g => g.Sum(oi => oi.Quantity))
-            .Select(g => new { BeverageId = g.Key, TotalQuantity = g.Sum(oi => oi.Quantity) })
-            .Take(5)
-            .ToListAsync();
-
+        var topBeverages = await _analyticService.GetTopBeverages();
         return Ok(topBeverages);
     }
 
@@ -29,7 +23,7 @@ public class AnalyticsController : ControllerBase
     [HttpGet("total-sales")]
     public async Task<IActionResult> GetTotalSales()
     {
-        var totalSales = await _context.Orders.SumAsync(o => o.TotalAmount);
+        var totalSales = await _analyticService.GetTotalSales();
         return Ok(new { TotalSales = totalSales });
     }
 
@@ -37,13 +31,7 @@ public class AnalyticsController : ControllerBase
     [HttpGet("top-customers")]
     public async Task<IActionResult> GetTopCustomers()
     {
-        var topCustomers = await _context.Orders
-            .GroupBy(o => o.CustomerId)
-            .OrderByDescending(g => g.Sum(o => o.TotalAmount))
-            .Select(g => new { CustomerId = g.Key, TotalSpent = g.Sum(o => o.TotalAmount) })
-            .Take(5)
-            .ToListAsync();
-
+        var topCustomers = await _analyticService.GetTopCustomers();
         return Ok(topCustomers);
     }
 
@@ -51,18 +39,7 @@ public class AnalyticsController : ControllerBase
     [HttpGet("monthly-revenue")]
     public async Task<IActionResult> GetMonthlyRevenue()
     {
-        var monthlyRevenue = await _context.Orders
-            .Where(o => o.OrderDate.HasValue)
-            .GroupBy(o => new { o.OrderDate!.Value.Year, o.OrderDate!.Value.Month })
-            .OrderBy(g => g.Key.Year).ThenBy(g => g.Key.Month)
-            .Select(g => new
-            {
-                g.Key.Year,
-                g.Key.Month,
-                Revenue = g.Sum(o => o.TotalAmount)
-            })
-            .ToListAsync();
-
+        var monthlyRevenue = await _analyticService.GetMonthlyRevenue();
         return Ok(monthlyRevenue);
     }
 
@@ -70,15 +47,7 @@ public class AnalyticsController : ControllerBase
     [HttpGet("sales-by-size")]
     public async Task<IActionResult> GetSalesBySize()
     {
-        var salesBySize = await _context.OrderItems
-            .GroupBy(oi => oi.Beverage.Size)
-            .Select(g => new
-            {
-                Size = g.Key,
-                TotalSales = g.Sum(oi => oi.Quantity * oi.Beverage.Price)
-            })
-            .ToListAsync();
-
+        var salesBySize = await _analyticService.GetSalesBySize();
         return Ok(salesBySize);
     }
 }

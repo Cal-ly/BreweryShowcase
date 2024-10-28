@@ -10,7 +10,6 @@ global using MySql.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore;
 global using Microsoft.EntityFrameworkCore.Design;
 global using Microsoft.AspNetCore.Mvc;
-global using Microsoft.Extensions.Logging;
 global using System.ComponentModel.DataAnnotations;
 global using Microsoft.IdentityModel.Tokens;
 global using System.IdentityModel.Tokens.Jwt;

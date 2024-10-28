@@ -13,6 +13,7 @@ builder.Services.AddDbContext<BreweryContext>(options => options.UseMySQL(connec
 
 
 builder.Services.AddScoped<TokenService>();
+builder.Services.AddScoped<AnalyticsService>();
 
 // JWT Configuration
 var jwtKey = builder.Configuration["Jwt:Key"];
@@ -30,10 +31,11 @@ builder.Services.AddAuthentication(options =>
 {
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuerSigningKey = true,
+        ValidateIssuerSigningKey = false,
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(jwtKey)),
-        ValidateIssuer = false,
-        ValidateAudience = false
+        ValidAudience = null,
+        ValidIssuer = null,
+        ValidateLifetime = false
     };
 });
 

@@ -1,7 +1,4 @@
-﻿using BreweryAPI.Services;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
-using Org.BouncyCastle.Crypto.Generators;
+﻿using Microsoft.AspNetCore.Authorization;
 
 namespace BreweryAPI.Controllers;
 [Route("api/[controller]")]
@@ -15,6 +12,13 @@ public class AuthController : ControllerBase
     {
         _context = context;
         _tokenService = tokenService;
+    }
+
+    [HttpGet("test-auth")]
+    [Authorize]
+    public IActionResult TestAuth()
+    {
+        return Ok("You are authenticated!");
     }
 
     [HttpPost("register")]

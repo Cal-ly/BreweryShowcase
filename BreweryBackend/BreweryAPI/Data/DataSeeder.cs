@@ -130,10 +130,10 @@ public class DataSeeder
                     var orderItem = new OrderItem
                     {
                         OrderId = order.Id,
+                        Order = order,
                         BeverageId = beverage.Id,
                         Beverage = beverage,
-                        Quantity = quantity,
-                        Order = order // Set the required Order property
+                        Quantity = quantity
                     };
 
                     order.OrderItems.Add(orderItem);
