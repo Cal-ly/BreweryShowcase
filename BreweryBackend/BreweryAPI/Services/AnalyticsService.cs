@@ -29,7 +29,7 @@ public class AnalyticsService
         return await _context.Orders
             .GroupBy(o => o.CustomerId)
             .OrderByDescending(g => g.Sum(o => o.TotalAmount))
-.Select(g => new TopCustomerDto { CustomerId = g.Key ?? string.Empty, TotalSpent = g.Sum(o => o.TotalAmount) })
+            .Select(g => new TopCustomerDto { CustomerId = g.Key ?? string.Empty, TotalSpent = g.Sum(o => o.TotalAmount) })
             .Take(5)
             .ToListAsync();
     }
