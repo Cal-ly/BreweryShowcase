@@ -348,7 +348,7 @@ The application requires environment variables for sensitive data. In local deve
 
 ### Authentication and Security
 
-The API uses **JWT (JSON Web Token)** for secure authentication. When a user logs in, the server generates a token that is stored client-side (e.g., in `localStorage`). The token is then attached to subsequent requests to access protected routes, ensuring only authenticated users with valid tokens can perform certain actions.
+The API is set up to use **JWT (JSON Web Token)** for secure authentication. The intent is, when a user logs in, the server generates a token that is stored client-side (e.g., in `localStorage`). The token is then attached to subsequent requests to access protected routes, ensuring only authenticated users with valid tokens can perform certain actions.
 
 #### JWT Structure
 - **Token Generation**: Tokens are issued upon login, with claims that include user roles for role-based access control.
