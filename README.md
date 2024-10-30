@@ -1,6 +1,6 @@
 # Brewery API Showcase
 
-This repository is a showcase for the backend for a full-stack B2B Brewery Ordering System. It highlights best practices for designing an API-driven architecture, focusing on clean, maintainable code, efficient data handling, and structured deployment. This document covers the API’s structure, architecture patterns, database design, and other inner workings relevant for future development or learning.
+This repository is a showcase for the backend for a full-stack B2B Brewery Ordering System. It tries to highlight best practices for designing an API-driven architecture, focusing on clean, maintainable code, efficient data handling, and structured deployment. This document covers the API’s structure, architecture patterns, database design, and other inner workings relevant for future development or learning.
 
 ---
 
