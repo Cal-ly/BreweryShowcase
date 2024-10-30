@@ -63,6 +63,11 @@ The database is structured using a **code-first approach** with **MySQL**. Relat
 Here’s the ER diagram in **Mermaid** syntax:
 
 ```mermaid
+---
+title: BreweryAPI Entity Relationship Diagram
+config:
+  theme: dark
+---
 erDiagram
     Customer {
         string Id PK
@@ -103,10 +108,10 @@ erDiagram
         SizeEnum Size
     }
     
-    Customer ||--o{ User : "1-1"
-    Customer ||--o{ Order : "1-N"
-    Order ||--o{ OrderItem : "1-N"
-    Beverage ||--o{ OrderItem : "1-N"
+    Customer ||--o| User : "Zero or one"
+    Customer ||--o{ Order : "One to many"
+    Order ||--o{ OrderItem : "Contains"
+    Beverage ||--|{ OrderItem : "One or more"
 ```
 
 ### Table Descriptions
@@ -117,49 +122,57 @@ erDiagram
 - **OrderItem**: Links an order with beverages, capturing quantity and price details.
 - **Beverage**: Represents products available for order, with various size and price options.
 
-## Class Diagrams
+## Class Diagrams and Enums
 
 The main entities and services interact as follows (in Mermaid syntax):
 
 ```mermaid
+---
+title: BreweryAPI Class Diagram
+config:
+  theme: dark
+---
 classDiagram
+    direction LR
     class Customer {
         +string Id
         +string Name
         +string Email
+        +string UserId
         +User User
         +List~Order~ Orders
         +void Validate()
     }
-    
     class User {
         +string Id
         +string Email
         +string PasswordHash
         +UserRoleEnum Role
+        +string CustomerId
         +Customer Customer
-        +bool ValidateCredentials()
+        +void Validate()
     }
-    
     class Order {
         +string Id
         +DateTime OrderDate
         +StatusEnum Status
         +decimal TotalAmount
+        +string CustomerId
         +Customer Customer
         +List~OrderItem~ OrderItems
         +void CalculateTotalAmount()
+        +void Validate()
     }
-    
     class OrderItem {
         +string Id
         +int Quantity
         +decimal Price
+        +string OrderId
         +Order Order
+        +string BeverageId
         +Beverage Beverage
         +void Validate()
     }
-    
     class Beverage {
         +string Id
         +string Name
@@ -169,19 +182,132 @@ classDiagram
         +void Validate()
     }
 
-    Customer --> User
-    Customer --> Order
-    Order --> OrderItem
-    OrderItem --> Beverage
+    Customer "1" --> "1" User
+    Customer "1" --> "0..*" Order
+    Order "1" --> "0..*" OrderItem
+    OrderItem "1" --> "1" Beverage
 ```
 
-## Authentication and Security
+The enums
 
-The API uses **JWT (JSON Web Token)** for secure authentication. When a user logs in, the server generates a token that is stored client-side (e.g., in `localStorage`). The token is then attached to subsequent requests to access protected routes, ensuring only authenticated users with valid tokens can perform certain actions.
+```mermaid
+---
+title: BreweryAPI Enums
+config:
+  theme: dark
+---
+classDiagram
+    class SizeEnum{
+        <<enumeration>>
+        None = 0
+        SmallBottle = 1
+        MediumBottle = 2
+        LargeBottle = 3
+        XLargeBottle = 4
+        SmallCan = 5
+        MediumCan = 6
+    }
+    class StatusEnum{
+        <<enumeration>>
+        None = 0
+        Pending = 1
+        Recived = 2
+        Packing = 3
+        Shipped = 4
+        Completed = 5
+        Cancelled = 6
+    }
+    class UserRoleEnum{
+        <<enumeration>>
+        None = 0
+        Admin = 1
+        Manager = 2
+        Customer = 3
+    }
+```
 
-### JWT Structure
-- **Token Generation**: Tokens are issued upon login, with claims that include user roles for role-based access control.
-- **Token Validation**: Middleware checks the token’s validity on protected endpoints, decoding the user role and ID.
+The controllers and services
+
+```mermaid
+---
+title: BreweryAPI Controller Class Diagram
+config:
+  theme: dark
+---
+classDiagram
+direction LR
+    class AuthController {
+        -BreweryContext _context
+        -TokenService _tokenService
+        +TestAuth()
+        +Register(registerDto: UserRegisterDto)
+        +Login(loginDto: UserLoginDto)
+    }
+    class AnalyticsController {
+        -AnalyticsService _analyticService
+        +GetTopBeverages()
+        +GetTotalSales()
+        +GetTopCustomers()
+        +GetMonthlyRevenue()
+        +GetSalesBySize()
+    }
+    class BeveragesController {
+        -BreweryContext _context
+        +GetBeverages()
+        +GetBeverage(id: string)
+        +CreateBeverage(beverage: Beverage)
+        +UpdateBeverage(id: string, updatedBeverage: Beverage)
+        +DeleteBeverage(id: string)
+    }
+    class CustomersController {
+        -BreweryContext _context
+        +GetCustomers()
+        +GetCustomer(id: string)
+        +CreateCustomer(customer: Customer)
+        +UpdateCustomer(id: string, updatedCustomer: Customer)
+        +DeleteCustomer(id: string)
+    }
+    class OrdersController {
+        -BreweryContext _context
+        +GetOrders()
+        +GetMyOrders()
+        +GetOrder(id: string)
+        +PlaceOrder(order: Order)
+        +UpdateOrderStatus(id: string, status: StatusEnum)
+    }
+    class UsersController {
+        -BreweryContext _context
+        -TokenService _tokenService
+        +CreateUser(registerDto: UserRegisterDto)
+        +GetUser(id: string)
+        +UpdateUser(id: string, updateDto: UserUpdateDto)
+        +DeleteUser(id: string)
+    }
+    class TokenService {
+        -IConfiguration _config
+        +GenerateToken(user: User)
+    }
+    class AnalyticsService {
+        -BreweryContext _context
+        +GetTopBeverages()
+        +GetTotalSales()
+        +GetTopCustomers()
+        +GetMonthlyRevenue()
+        +GetSalesBySize()
+    }
+
+    AuthController --> BreweryContext
+    AuthController --> TokenService
+    AnalyticsController --> AnalyticsService
+    BeveragesController --> BreweryContext
+    CustomersController --> BreweryContext
+    OrdersController --> BreweryContext
+    UsersController --> BreweryContext
+    UsersController --> TokenService
+    TokenService --> IConfiguration
+    AnalyticsService --> BreweryContext
+
+```
 
 ## Getting Started
 
@@ -221,10 +347,18 @@ The application requires environment variables for sensitive data. In local deve
 
 ---
 
+## To be implemented
+
+### Authentication and Security
+
+The API uses **JWT (JSON Web Token)** for secure authentication. When a user logs in, the server generates a token that is stored client-side (e.g., in `localStorage`). The token is then attached to subsequent requests to access protected routes, ensuring only authenticated users with valid tokens can perform certain actions.
+
+#### JWT Structure
+- **Token Generation**: Tokens are issued upon login, with claims that include user roles for role-based access control.
+- **Token Validation**: Middleware checks the token’s validity on protected endpoints, decoding the user role and ID.
+
+---
+
 ## Contact and Contributions
 
 For questions, suggestions, or contributions, please open an issue or contact the repository owner.
-
---- 
-
-Let me know if you need additional adjustments or specifics!
