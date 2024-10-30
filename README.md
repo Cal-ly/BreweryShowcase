@@ -10,10 +10,10 @@ This repository is a showcase for the backend for a full-stack B2B Brewery Order
 2. [API Structure](#api-structure)
 3. [Database Design](#database-design)
 4. [Class Diagrams](#class-diagrams)
-5. [Authentication and Security](#authentication-and-security)
 6. [Getting Started](#getting-started)
 7. [Environment Variables](#environment-variables)
-8. [Contact and Contributions](#contact-and-contributions)
+8. [To be implemented](#to-be-implemented)
+9. [Contact and Contributions](#contact-and-contributions)
 
 ---
 
