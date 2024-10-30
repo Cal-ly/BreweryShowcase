@@ -342,8 +342,6 @@ The application requires environment variables for sensitive data. In local deve
 - `JWT_SECRET`: Secret key for JWT token signing
 - `DATABASE_URL`: Connection string for the MySQL database
 
----
-
 ## To be implemented
 
 ### Authentication and Security
