@@ -32,9 +32,6 @@ This project follows a **RESTful API architecture** using **ASP.NET Core** as th
 - **Repository Pattern**: Used to encapsulate data access logic for entities such as `Customer`, `Order`, and `Beverage`.
 - **Service Pattern**: The `Service` classes handle complex business logic and reduce controller complexity by orchestrating data flow.
 
-### To be implemented 
-- **JWT Authentication**: Used for secure token-based authentication, allowing safe access to protected routes.
-
 ## API Structure
 
 ### Controllers
